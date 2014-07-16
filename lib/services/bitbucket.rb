@@ -34,13 +34,15 @@ class Service::Bitbucket < Service::Base
 
   page "Username", [:username]
   page "Password", [:password]
-  page "Repository Owner", [:repo_owner]
+  page "Repository Owner (if different from Username)", [:repo_owner]
   page "Repository", [:repo]
   
 
   def receive_verification(config, _)
     username = config[:username]
     repo_owner = config[:repo_owner]
+    if repo_owner == nil or repo_owner.length == 0
+      repo_owner = username
     repo = config[:repo]
     http.ssl[:verify] = true
     http.basic_auth username, config[:password]
@@ -61,6 +63,8 @@ class Service::Bitbucket < Service::Base
   def receive_issue_impact_change(config, payload)
     username = config[:username]
     repo_owner = config[:repo_owner]
+    if repo_owner == nil or repo_owner.length == 0
+      repo_owner = username
     repo = config[:repo]
     http.ssl[:verify] = true
     http.basic_auth username, config[:password]
